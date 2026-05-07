@@ -8,7 +8,7 @@ import java.io.IOException
 
 class NfcReadManager {
     companion object {
-        private const val CUE_SCHEME = "cue://chip/"
+        private const val CUE_SCHEME = "cue://"
     }
 
     fun read(tag: Tag): ReadResult {
@@ -23,7 +23,7 @@ class NfcReadManager {
         } catch (e: IOException) {
             ReadResult.UnknownError(e)
         } finally {
-            try { ndef.close() } catch (e: IOException) {  }
+            try { ndef.close() } catch (_: IOException) {  }
         }
     }
 
@@ -33,23 +33,31 @@ class NfcReadManager {
 
     private fun extractCueChipId(message: NdefMessage): ReadResult {
         for (record in message.records) {
-            val chipId = extractFromRecord(record)
-            if (chipId != null) return ReadResult.Success(chipId)
+            val (host, chipId) = extractFromRecord(record) ?: continue
+            return ReadResult.Success(host, chipId)
         }
 
         return ReadResult.NotACueChip
     }
 
-    private fun extractFromRecord(record: NdefRecord): String? {
+    private fun extractFromRecord(record: NdefRecord): Pair<String, String>? {
         if (record.tnf != NdefRecord.TNF_WELL_KNOWN) return null
         if (!record.type.contentEquals(NdefRecord.RTD_URI)) return null
 
         return try {
             val uri = record.toUri()?.toString() ?: return null
-            if (uri.startsWith(CUE_SCHEME)) {
-                uri.removePrefix(CUE_SCHEME).takeIf { it.isNotBlank() }
-            } else null
-        } catch (e: Exception) {
+            if (!uri.startsWith(CUE_SCHEME)) return null
+
+            val withoutScheme = uri.removePrefix(CUE_SCHEME)
+            val parts = withoutScheme.split("/")
+            if (parts.size < 2) return null
+
+            val host = parts[0]
+            val chipId = parts[1]
+
+            if (host.isBlank() || chipId.isBlank()) null
+            else Pair(host, chipId)
+        } catch (_: Exception) {
             null
         }
     }

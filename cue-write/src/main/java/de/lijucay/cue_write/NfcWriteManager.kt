@@ -12,12 +12,12 @@ import java.util.UUID
 
 class NfcWriteManager {
     companion object {
-        private const val CUE_SCHEME = "cue://chip/"
+        private const val CUE_SCHEME = "cue://"
     }
 
-    fun write(tag: Tag): Pair<WriteResult, CueChip?> {
+    fun write(tag: Tag, host: String): Pair<WriteResult, CueChip?> {
         val chipId = UUID.randomUUID().toString()
-        val message = createNdefMessage(chipId)
+        val message = createNdefMessage(chipId, host)
 
         // Check if chip is NDEF-formatted
         val ndef = Ndef.get(tag)
@@ -79,8 +79,8 @@ class NfcWriteManager {
         }
     }
 
-    private fun createNdefMessage(chipId: String): NdefMessage {
-        val uri = "$CUE_SCHEME$chipId"
+    private fun createNdefMessage(chipId: String, host: String): NdefMessage {
+        val uri = "$CUE_SCHEME$host/$chipId"
         val record = NdefRecord.createUri(uri)
         return NdefMessage(arrayOf(record))
     }
