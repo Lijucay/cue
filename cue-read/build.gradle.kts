@@ -27,7 +27,7 @@ publishing {
     publications {
         register<MavenPublication>("release") {
             groupId = "de.lijucay"
-            artifactId = "cue-write"
+            artifactId = "cue-read"
             version = "1.0.0"
 
             afterEvaluate {
