@@ -28,7 +28,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "de.lijucay"
             artifactId = "cue-read"
-            version = "1.0.0"
+            version = libs.versions.dependencyVer.get()
 
             afterEvaluate {
                 from(components["release"])

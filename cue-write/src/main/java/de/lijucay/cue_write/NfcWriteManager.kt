@@ -30,6 +30,18 @@ class NfcWriteManager {
         return Pair(WriteResult.NotNdefCompatible, null)
     }
 
+    fun write(tag: Tag, host: String, id: UUID): Pair<WriteResult, CueChip?> {
+        val message = createNdefMessage(id.toString(), host)
+
+        val ndef = Ndef.get(tag)
+        if (ndef != null) return writeToNdef(ndef, message, id.toString())
+
+        val formatable = NdefFormatable.get(tag)
+        if (formatable != null) return formatAndWrite(formatable, message, id.toString())
+
+        return Pair(WriteResult.NotNdefCompatible, null)
+    }
+
     private fun writeToNdef(
         ndef: Ndef,
         message: NdefMessage,

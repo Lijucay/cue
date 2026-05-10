@@ -10,6 +10,7 @@ material = "1.13.0"
 minSdk = "26"
 targetSdk = "37"
 compileSdk = "37"
+dependencyVer = "v1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
