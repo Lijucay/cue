@@ -15,29 +15,18 @@ class NfcWriteManager {
         private const val CUE_SCHEME = "cue://"
     }
 
-    fun write(tag: Tag, host: String): Pair<WriteResult, CueChip?> {
-        val chipId = UUID.randomUUID().toString()
+    fun write(tag: Tag, host: String): Pair<WriteResult, CueChip?> =
+        write(tag, host, UUID.randomUUID())
+
+    fun write(tag: Tag, host: String, id: UUID): Pair<WriteResult, CueChip?> {
+        val chipId = id.toString()
         val message = createNdefMessage(chipId, host)
 
-        // Check if chip is NDEF-formatted
         val ndef = Ndef.get(tag)
         if (ndef != null) return writeToNdef(ndef, message, chipId)
 
-        // If not, check if chip is formatable
         val formatable = NdefFormatable.get(tag)
         if (formatable != null) return formatAndWrite(formatable, message, chipId)
-
-        return Pair(WriteResult.NotNdefCompatible, null)
-    }
-
-    fun write(tag: Tag, host: String, id: UUID): Pair<WriteResult, CueChip?> {
-        val message = createNdefMessage(id.toString(), host)
-
-        val ndef = Ndef.get(tag)
-        if (ndef != null) return writeToNdef(ndef, message, id.toString())
-
-        val formatable = NdefFormatable.get(tag)
-        if (formatable != null) return formatAndWrite(formatable, message, id.toString())
 
         return Pair(WriteResult.NotNdefCompatible, null)
     }

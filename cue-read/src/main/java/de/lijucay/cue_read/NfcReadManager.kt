@@ -7,9 +7,6 @@ import android.nfc.tech.Ndef
 import java.io.IOException
 
 class NfcReadManager {
-    companion object {
-        private const val CUE_SCHEME = "cue://"
-    }
 
     fun read(tag: Tag): ReadResult {
         val ndef = Ndef.get(tag) ?: return ReadResult.NotNdefCompatible
@@ -45,18 +42,13 @@ class NfcReadManager {
         if (!record.type.contentEquals(NdefRecord.RTD_URI)) return null
 
         return try {
-            val uri = record.toUri()?.toString() ?: return null
-            if (!uri.startsWith(CUE_SCHEME)) return null
+            val uri = record.toUri() ?: return null
+            if (uri.scheme != "cue") return null
 
-            val withoutScheme = uri.removePrefix(CUE_SCHEME)
-            val parts = withoutScheme.split("/")
-            if (parts.size < 2) return null
+            val host = uri.host?.takeIf { it.isNotBlank() } ?: return null
+            val chipId = uri.pathSegments.firstOrNull()?.takeIf { it.isNotBlank() } ?: return null
 
-            val host = parts[0]
-            val chipId = parts[1]
-
-            if (host.isBlank() || chipId.isBlank()) null
-            else Pair(host, chipId)
+            Pair(host, chipId)
         } catch (_: Exception) {
             null
         }
