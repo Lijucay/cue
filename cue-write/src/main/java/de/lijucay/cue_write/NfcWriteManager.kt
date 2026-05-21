@@ -15,10 +15,10 @@ class NfcWriteManager {
         private const val CUE_SCHEME = "cue://"
     }
 
-    fun write(tag: Tag, host: String): Pair<WriteResult, CueChip?> =
+    fun write(tag: Tag, host: String): WriteResult =
         write(tag, host, UUID.randomUUID())
 
-    fun write(tag: Tag, host: String, id: UUID): Pair<WriteResult, CueChip?> {
+    fun write(tag: Tag, host: String, id: UUID): WriteResult {
         val chipId = id.toString()
         val message = createNdefMessage(chipId, host)
 
@@ -28,33 +28,33 @@ class NfcWriteManager {
         val formatable = NdefFormatable.get(tag)
         if (formatable != null) return formatAndWrite(formatable, message, chipId)
 
-        return Pair(WriteResult.NotNdefCompatible, null)
+        return WriteResult.NotNdefCompatible
     }
 
     private fun writeToNdef(
         ndef: Ndef,
         message: NdefMessage,
         chipId: String
-    ): Pair<WriteResult, CueChip?> {
+    ): WriteResult {
         return try {
             ndef.connect()
 
             if (!ndef.isWritable) {
-                return Pair(WriteResult.NotWriteable, null)
+                return WriteResult.NotWriteable
             }
 
             if (ndef.maxSize < message.toByteArray().size) {
-                return Pair(WriteResult.InsufficientSize, null)
+                return WriteResult.InsufficientSize
             }
 
             ndef.writeNdefMessage(message)
-            Pair(WriteResult.Success, CueChip(chipId))
+            WriteResult.Success(CueChip(chipId))
         } catch (_: TagLostException) {
-            Pair(WriteResult.TagLost, null)
+            WriteResult.TagLost
         } catch (e: IOException) {
-            Pair(WriteResult.UnknownError(e), null)
+            WriteResult.UnknownError(e)
         } catch (e: FormatException) {
-            Pair(WriteResult.UnknownError(e), null)
+            WriteResult.UnknownError(e)
         } finally {
             try { ndef.close() } catch (_: IOException) {  }
         }
@@ -64,17 +64,17 @@ class NfcWriteManager {
         formatable: NdefFormatable,
         message: NdefMessage,
         chipId: String
-    ): Pair<WriteResult, CueChip?> {
+    ): WriteResult {
         return try {
             formatable.connect()
             formatable.format(message)
-            Pair(WriteResult.Success, CueChip(chipId))
+            WriteResult.Success(CueChip(chipId))
         } catch (_: TagLostException) {
-            Pair(WriteResult.TagLost, null)
+            WriteResult.TagLost
         } catch (e: IOException) {
-            Pair(WriteResult.UnknownError(e), null)
+            WriteResult.UnknownError(e)
         } catch (e: FormatException) {
-            Pair(WriteResult.UnknownError(e), null)
+            WriteResult.UnknownError(e)
         } finally {
             try { formatable.close() } catch (_: IOException) {  }
         }

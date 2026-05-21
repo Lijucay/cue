@@ -1,7 +1,7 @@
 package de.lijucay.cue_write
 
 sealed interface WriteResult {
-    data object Success : WriteResult
+    data class Success(val chip: CueChip) : WriteResult
     data object TagLost : WriteResult
     data object NotWriteable : WriteResult
     data object InsufficientSize : WriteResult
