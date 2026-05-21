@@ -17,7 +17,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Publish to MavenCentral
-        run: ./gradlew :cue:publishAndReleaseToMavenCentral :cue-read:publishAndReleaseToMavenCentral :cue-write:publishAndReleaseToMavenCentral --no-configuration-cache
+        run: ./gradlew :cue:publishToMavenCentral :cue-read:publishToMavenCentral :cue-write:publishToMavenCentral --no-configuration-cache
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
