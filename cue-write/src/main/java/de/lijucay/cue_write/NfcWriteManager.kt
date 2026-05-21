@@ -49,7 +49,7 @@ class NfcWriteManager {
 
             ndef.writeNdefMessage(message)
             Pair(WriteResult.Success, CueChip(chipId))
-        } catch (e: TagLostException) {
+        } catch (_: TagLostException) {
             Pair(WriteResult.TagLost, null)
         } catch (e: IOException) {
             Pair(WriteResult.UnknownError(e), null)
@@ -69,7 +69,7 @@ class NfcWriteManager {
             formatable.connect()
             formatable.format(message)
             Pair(WriteResult.Success, CueChip(chipId))
-        } catch (e: TagLostException) {
+        } catch (_: TagLostException) {
             Pair(WriteResult.TagLost, null)
         } catch (e: IOException) {
             Pair(WriteResult.UnknownError(e), null)
