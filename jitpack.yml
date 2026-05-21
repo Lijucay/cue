@@ -1,7 +1,7 @@
 jdk:
-  -openjdk17
+  - openjdk17
 before install:
-  -sdk install java 17.0.10-open
+  - sdk install java 17.0.10-open
 build:
   artifacts:
     - cue-write/build/outputs/aar/
