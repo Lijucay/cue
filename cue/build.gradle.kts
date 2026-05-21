@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    `maven-publish`
+    id("com.vanniktech.maven.publish") version "0.36.0"
 }
 
 android {
@@ -9,12 +9,6 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-    }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
     }
 
     compileOptions {
@@ -28,16 +22,33 @@ dependencies {
     api(project(":cue-read"))
 }
 
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = "de.lijucay"
-            artifactId = "cue"
-            version = libs.versions.dependencyVer.get()
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
 
-            afterEvaluate {
-                from(components["release"])
+    coordinates("de.lijucay", "cue", libs.versions.dependencyVer.get())
+
+    pom {
+        name = "Cue"
+        description = "NFC library for Android"
+        url = "https://github.com/Lijucay/Cue"
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
             }
+        }
+        developers {
+            developer {
+                id = "lijucay"
+                name = "Luca"
+                url = "https://lijucay.de"
+            }
+        }
+        scm {
+            url = "https://github.com/Lijucay/Cue"
+            connection = "scm:git:git://github.com/Lijucay/Cue.git"
+            developerConnection = "scm:git:ssh://git@github.com/Lijucay/Cue.git"
         }
     }
 }
