@@ -86,3 +86,4 @@ class NfcWriteManager {
         return NdefMessage(arrayOf(record))
     }
 }
+
