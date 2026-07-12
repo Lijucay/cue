@@ -11,6 +11,7 @@ minSdk = "26"
 targetSdk = "37"
 compileSdk = "37"
 dependencyVer = "1.1.0"
+vanniktechMaven = "0.37.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,4 +26,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-
+vanniktech-maven = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMaven" }

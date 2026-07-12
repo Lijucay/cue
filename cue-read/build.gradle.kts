@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    id("com.vanniktech.maven.publish") version "0.36.0"
+    alias(libs.plugins.vanniktech.maven)
 }
 
 android {
