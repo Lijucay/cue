@@ -10,7 +10,7 @@ material = "1.14.0"
 minSdk = "26"
 targetSdk = "37"
 compileSdk = "37"
-dependencyVer = "1.1.0"
+dependencyVer = "2.0.1"
 vanniktechMaven = "0.37.0"
 
 [libraries]
