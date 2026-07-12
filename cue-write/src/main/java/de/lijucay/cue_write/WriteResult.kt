@@ -6,8 +6,8 @@ sealed interface WriteResult {
     data object NotWriteable : WriteResult
     data object InsufficientSize : WriteResult
     data object NotNdefCompatible : WriteResult
-    data object NotFormatable : WriteResult
-    data object FormatSuccess : WriteResult
+    data object NotErasable : WriteResult
+    data object EraseSuccess : WriteResult
     data class UnknownError(val cause: Exception) : WriteResult
-    data class FormatException(val e: android.nfc.FormatException) : WriteResult
+    data class EraseException(val e: Exception) : WriteResult
 }

@@ -34,22 +34,29 @@ class NfcWriteManager {
 
     fun isFormatted(tag: Tag) = Ndef.get(tag) != null
 
-    fun format(tag: Tag, message: NdefMessage): WriteResult {
-        if (isFormatted(tag)) return WriteResult.FormatSuccess
-
-        val formatable = NdefFormatable.get(tag)
-            ?: return WriteResult.NotFormatable
+    fun erase(tag: Tag): WriteResult {
+        val ndef = Ndef.get(tag)
+            ?: return WriteResult.NotErasable
 
         return try {
-            formatable.connect()
-            formatable.format(message)
-            WriteResult.FormatSuccess
+            ndef.connect()
+
+            val emptyRecord = NdefRecord(
+                NdefRecord.TNF_EMPTY,
+                ByteArray(0),
+                ByteArray(0),
+                ByteArray(0)
+            )
+
+            val emptyMessage = NdefMessage(arrayOf(emptyRecord))
+            ndef.writeNdefMessage(emptyMessage)
+            WriteResult.EraseSuccess
         } catch (e: FormatException) {
-            WriteResult.FormatException(e)
+            WriteResult.EraseException(e)
         } catch (e: IOException) {
             WriteResult.UnknownError(e)
         } finally {
-            try { formatable.close() } catch (_: IOException) {  }
+            try { ndef.close() } catch (_: IOException) {  }
         }
     }
 
