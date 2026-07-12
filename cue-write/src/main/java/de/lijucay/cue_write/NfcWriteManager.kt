@@ -8,6 +8,7 @@ import android.nfc.TagLostException
 import android.nfc.tech.Ndef
 import android.nfc.tech.NdefFormatable
 import java.io.IOException
+import java.text.Format
 import java.util.UUID
 
 class NfcWriteManager {
@@ -29,6 +30,27 @@ class NfcWriteManager {
         if (formatable != null) return formatAndWrite(formatable, message, chipId)
 
         return WriteResult.NotNdefCompatible
+    }
+
+    fun isFormatted(tag: Tag) = Ndef.get(tag) != null
+
+    fun format(tag: Tag, message: NdefMessage): WriteResult {
+        if (isFormatted(tag)) return WriteResult.FormatSuccess
+
+        val formatable = NdefFormatable.get(tag)
+            ?: return WriteResult.NotFormatable
+
+        return try {
+            formatable.connect()
+            formatable.format(message)
+            WriteResult.FormatSuccess
+        } catch (e: FormatException) {
+            WriteResult.FormatException(e)
+        } catch (e: IOException) {
+            WriteResult.UnknownError(e)
+        } finally {
+            try { formatable.close() } catch (_: IOException) {  }
+        }
     }
 
     private fun writeToNdef(
